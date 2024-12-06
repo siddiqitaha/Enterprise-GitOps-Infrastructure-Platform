@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from . import models, schemas
 from .database import engine, get_db
+from datetime import datetime
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -21,12 +22,13 @@ app.add_middleware(
 
 @app.get("/api/tasks", response_model=List[schemas.Task])
 def get_tasks(db: Session = Depends(get_db)):
-    tasks = db.query(models.Task).all()
+    tasks = db.query(models.Task).order_by(models.Task.due_date.asc()).all()
     return tasks
 
 @app.post("/api/tasks", response_model=schemas.Task)
 def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
-    db_task = models.Task(**task.dict())
+    print("Received task data:", task.model_dump())  # Debug log
+    db_task = models.Task(**task.model_dump())
     db.add(db_task)
     db.commit()
     db.refresh(db_task)
@@ -38,7 +40,7 @@ def update_task(task_id: int, task: schemas.TaskCreate, db: Session = Depends(ge
     if db_task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     
-    for key, value in task.dict().items():
+    for key, value in task.model_dump().items():
         setattr(db_task, key, value)
     
     db.commit()
