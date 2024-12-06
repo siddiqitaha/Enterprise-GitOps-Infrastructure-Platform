@@ -1,0 +1,23 @@
+# Python Backend
+__pycache__/
+backend/*.py[cod]
+backend/tasks.db
+.env
+.venv/
+venv/
+
+# Frontend
+frontend/node_modules/
+frontend/.env
+frontend/dist/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+
+# IDE and System files
+.vscode/
+.idea/
+.DS_Store
+frontend/package-lock.json
